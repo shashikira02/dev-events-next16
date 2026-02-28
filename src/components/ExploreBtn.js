@@ -2,14 +2,20 @@
 
 import Image from "next/image";
 import React from "react";
+import posthog from "posthog-js";
 
 const ExploreBtn = () => {
+  const handleClick = () => {
+    console.log("ok");
+    posthog.capture("explore_events_clicked");
+  };
+
   return (
     <button
       type="button"
       id="explore-btn"
       className="mt-7 mx-auto"
-      onClick={() => console.log("ok")}
+      onClick={handleClick}
     >
       <a href="#events">
         Explore Events
