@@ -6,11 +6,9 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Title is required'],
       trim: true,
-      maxlength: [100, 'Title cannot exceed 100 characters']
     },
     slug: {
       type: String,
-      unique: true,
       lowercase: true,
       trim: true,
     },
@@ -78,7 +76,7 @@ const eventSchema = new mongoose.Schema(
 );
 
 // Pre-save hook: Generate slug from title and normalize date/time
-eventSchema.pre('save', function (next) {
+eventSchema.pre('save', function () {
   // Generate slug only if title is modified
   if (this.isModified('title')) {
     this.slug = this.title
@@ -93,7 +91,7 @@ eventSchema.pre('save', function (next) {
   if (this.isModified('date')) {
     const dateObj = new Date(this.date);
     if (isNaN(dateObj.getTime())) {
-      return next(new Error('Invalid date format'));
+      throw new Error('Invalid date format');
     }
     this.date = dateObj.toISOString().split('T')[0];
   }
@@ -102,15 +100,13 @@ eventSchema.pre('save', function (next) {
   if (this.isModified('time')) {
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
     if (!timeRegex.test(this.time)) {
-      return next(new Error('Time must be in HH:MM format'));
+      throw new Error('Time must be in HH:MM format');
     }
   }
-
-  next();
 });
 
 // Index for faster slug-based queries
-eventSchema.index({ slug: 1 });
+eventSchema.index({ slug: 1 }, { unique: true });
 
 const Event = mongoose.models.Event || mongoose.model('Event', eventSchema);
 

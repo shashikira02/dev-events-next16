@@ -25,14 +25,13 @@ const bookingSchema = new mongoose.Schema(
 );
 
 // Pre-save hook: Verify that the referenced event exists
-bookingSchema.pre('save', async function (next) {
+bookingSchema.pre('save', async function () {
   if (this.isModified('eventId')) {
     const eventExists = await Event.findById(this.eventId);
     if (!eventExists) {
-      return next(new Error('Referenced event does not exist'));
+      throw new Error('Referenced event does not exist');
     }
   }
-  next();
 });
 
 // Index for faster event-based queries
