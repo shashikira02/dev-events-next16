@@ -3,6 +3,9 @@ import React from "react";
 import EventCard from "./EventCard";
 import BookEvent from "./BookEvent";
 import { cacheLife } from "next/cache";
+import { getSimilarEventsBySlug } from "@/lib/actions/events.actions";
+import { notFound } from "next/navigation";
+
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const EventDetailItem = ({ icon, alt, label }) => (
